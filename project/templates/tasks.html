@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
 {% block content %}
 
-<h1>Welcome to FlaskTaskr</h1>
+<h1>Welcome to FlaskTaskR</h1>
 <a href="/logout">Logout</a>
 <div class="add-task">
     <h3>Add a new task:</h3>
@@ -62,7 +62,7 @@
                 <td width="50px">{{ task.priority }}</td>
                 <td>
                     <a href="{{ url_for('delete_entry', task_id=task.task_id) }}">Delete</a> - 
-                    <a href="{{ url_for('complete', task_id=task.task_id">Mark as Complete</a>
+                    <a href="{{ url_for('complete', task_id=task.task_id) }}">Mark as Complete</a>
                 </td>
             </tr>
             {% endfor %}
