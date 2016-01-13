@@ -83,7 +83,7 @@ def new_task():
         return redirect(url_for('tasks'))
     else:
         g.db.execute("""INSERT INTO tasks (name, due_date, priority, status)
-                        VALUES (?, ?, ? 1)""", [
+                        VALUES (?, ?, ?, 1)""", [
                         request.form['name'],
                         request.form['due_date'],
                         request.form['priority']
