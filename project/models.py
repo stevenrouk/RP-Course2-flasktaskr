@@ -14,7 +14,7 @@ class Task(db.Model):
     name = db.Column(db.String, nullable=False)
     due_date = db.Column(db.Date, nullable=False)
     priority = db.Column(db.Integer, nullable=False)
-    posted_date = db.Column(db.Date, default=datetime.datetime.utcnow())
+    posted_date = db.Column(db.Date, default=datetime.datetime.now())
     status = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
