@@ -1,7 +1,18 @@
 body {
-    font-family: sans-serif;
-    background: #eee;
+    padding: 60px 0;
+    background: #fff;
 }
+
+.footer {
+    padding-top: 30px;
+}
+
+.error {
+    color: red;
+    font-size: .8em;
+}
+
+/* unsure if needed with Bootstrap
 
 a, h1, h2 {
     color: #377ba8;
@@ -127,3 +138,4 @@ h2 {
     text-decoration: none;
     position: relative;
 }
+*/
