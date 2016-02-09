@@ -53,15 +53,6 @@ class AllTests(unittest.TestCase):
         db.session.add(new_user)
         db.session.commit()
 
-    def create_task(self):
-        return self.app.post('add/', data=dict(
-                name='Go to the bank',
-                due_date='02/05/2014',
-                priority='1',
-                posted_date='02/04/2014',
-                status='1'
-            ), follow_redirects=True)
-
 
     ############################
     ######## dummy data ########
@@ -136,65 +127,20 @@ class AllTests(unittest.TestCase):
         response = self.logout()
         self.assertIn(b'Goodbye!', response.data)
 
-    def test_task_page_access(self):
-        # not logged in
-        response = self.app.get('tasks/', follow_redirects=True)
-        self.assertIn(b'You need to login first.', response.data)
-        # logged in
-        self.register(*self.michael_register)
-        self.login(*self.michael_login)
-        response = self.app.get('tasks/')
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Add a new task:', response.data)
+    def test_default_user_role(self):
+        db.session.add(
+            User(
+                "Johnny",
+                "john@doe.com",
+                "johnny"
+            )
+        )
+        db.session.commit()
 
-    def test_users_can_add_tasks(self):
-        self.create_user(*self.michael_create_user)
-        self.login(*self.michael_login)
-        self.app.get('tasks/', follow_redirects=True)
-        response = self.create_task()
-        self.assertIn(b'New entry was successfully posted. Thanks!', response.data)
-
-    def test_users_cannot_add_tasks_when_error(self):
-        self.create_user(*self.michael_create_user)
-        self.login(*self.michael_login)
-        self.app.get('tasks/', follow_redirects=True)
-        response = self.app.post('add/', data=dict(
-            name='Go to the bank',
-            due_date='',
-            priority='1',
-            posted_date='02/05/2014',
-            status='1'
-        ), follow_redirects=True)
-        self.assertIn(b'This field is required.', response.data)
-
-    def test_users_can_complete_tasks(self):
-        self.create_user(*self.michael_create_user)
-        self.login(*self.michael_login)
-        self.app.get('tasks/', follow_redirects=True)
-        self.create_task()
-        response = self.app.get('complete/1/', follow_redirects=True)
-        self.assertIn(b'The task is complete! Nice.', response.data)
-
-    def test_users_can_delete_tasks(self):
-        self.create_user(*self.michael_create_user)
-        self.login(*self.michael_login)
-        self.app.get('tasks/', follow_redirects=True)
-        self.create_task()
-        response = self.app.get('delete/1/', follow_redirects=True)
-        self.assertIn(b'The task was deleted.', response.data)
-
-    def test_users_cannot_complete_tasks_not_created_by_them(self):
-        self.create_user(*self.michael_create_user)
-        self.login(*self.michael_login)
-        self.app.get('tasks/', follow_redirects=True)
-        self.create_task()
-        self.logout()
-        self.create_user(*self.fletcher_create_user)
-        self.login(*self.fletcher_login)
-        self.app.get('tasks/', follow_redirects=True)
-        response = self.app.get('complete/1/', follow_redirects=True)
-        self.assertNotIn(b'The task is complete! Nice.', response.data)
-
+        users = db.session.query(User).all()
+        print users
+        for user in users:
+            self.assertEqual(user.role, 'user')
 
 
 if __name__ == '__main__':
