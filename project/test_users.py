@@ -138,7 +138,6 @@ class AllTests(unittest.TestCase):
         db.session.commit()
 
         users = db.session.query(User).all()
-        print users
         for user in users:
             self.assertEqual(user.role, 'user')
 

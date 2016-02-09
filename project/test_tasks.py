@@ -48,8 +48,8 @@ class AllTests(unittest.TestCase):
     def logout(self):
         return self.app.get('logout/', follow_redirects=True)
 
-    def create_user(self, name, email, password):
-        new_user = User(name=name, email=email, password=password)
+    def create_user(self, name, email, password, role=None):
+        new_user = User(name=name, email=email, password=password, role=role)
         db.session.add(new_user)
         db.session.commit()
 
@@ -74,6 +74,10 @@ class AllTests(unittest.TestCase):
     fletcher_register = ['Fletcher', 'fletcher@realpython.com', 'python', 'python']
     fletcher_create_user = ['Fletcher', 'fletcher@realpython.com', 'python']
     fletcher_login = ['Fletcher', 'python']
+
+    admin_register = ['SuperUser', 'superuser@super.com', 'superduper', 'superduper']
+    admin_create_user = ['SuperUser', 'superuser@super.com', 'superduper', 'admin']
+    admin_login = ['SuperUser', 'superduper']
 
 
     ############################
@@ -153,6 +157,32 @@ class AllTests(unittest.TestCase):
         response = self.app.get('delete/1/', follow_redirects=True)
         self.assertNotIn(b'The task was deleted.', response.data)
         self.assertIn(b'You can only delete tasks that belong to you.', response.data)
+
+    def test_admin_users_can_complete_tasks_not_created_by_them(self):
+        self.create_user(*self.michael_create_user)
+        self.login(*self.michael_login)
+        self.app.get('tasks/', follow_redirects=True)
+        self.create_task()
+        self.logout()
+        self.create_user(*self.admin_create_user)
+        self.login(*self.admin_login)
+        self.app.get('tasks/', follow_redirects=True)
+        response = self.app.get('complete/1/', follow_redirects=True)
+        self.assertIn(b'The task is complete! Nice.', response.data)
+        self.assertNotIn(b'You can only update tasks that belong to you.', response.data)
+
+    def test_admin_users_can_delete_tasks_not_created_by_them(self):
+        self.create_user(*self.michael_create_user)
+        self.login(*self.michael_login)
+        self.app.get('tasks/', follow_redirects=True)
+        self.create_task()
+        self.logout()
+        self.create_user(*self.admin_create_user)
+        self.login(*self.admin_login)
+        self.app.get('tasks/', follow_redirects=True)
+        response = self.app.get('delete/1/', follow_redirects=True)
+        self.assertIn(b'The task was deleted.', response.data)
+        self.assertNotIn(b'You can only delete tasks that belong to you.', response.data)
 
 
 
