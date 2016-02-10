@@ -83,6 +83,6 @@ def register():
                 flash('Thanks for registering. Please login.')
                 return redirect(url_for('users.login'))
             except IntegrityError:
-                error = 'That username and/or email already exist.'
+                error = 'That username and/or email already exists.'
                 return render_template('register.html', form=form, error=error)
     return render_template('register.html', form=form, error=error)

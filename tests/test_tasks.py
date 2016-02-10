@@ -4,9 +4,9 @@
 import os
 import unittest
 
-from views import app, db
-from _config import basedir
-from models import User
+from project import app, db
+from project._config import basedir
+from project.models import Task, User
 
 TEST_DB = 'test.db'
 
@@ -101,7 +101,7 @@ class AllTests(unittest.TestCase):
         self.login(*self.michael_login)
         self.app.get('tasks/', follow_redirects=True)
         response = self.create_task()
-        self.assertIn(b'New entry was successfully posted. Thanks!', response.data)
+        self.assertIn(b'New entry was successfully posted. Thanks.', response.data)
 
     def test_users_cannot_add_tasks_when_error(self):
         self.create_user(*self.michael_create_user)
