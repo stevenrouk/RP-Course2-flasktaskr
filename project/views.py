@@ -10,11 +10,9 @@ from sqlalchemy.exc import IntegrityError
 
 from forms import AddTaskForm, RegisterForm, LoginForm
 
-# config
+from project import app, db
 
-app = Flask(__name__)
-app.config.from_object('_config')
-db = SQLAlchemy(app)
+# config
 
 from models import Task, User
 
